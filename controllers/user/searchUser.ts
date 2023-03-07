@@ -17,12 +17,28 @@ export default async function getAllUsers(
       throw createError(httpStatus.BAD_REQUEST, error.message);
     }
 
-    const { page, limit, isDelete, ...filterValue } = value;
+    const { page, limit, isDelete, name, email } = value;
+    const valueOfName = { name };
+    console.log(valueOfName);
+    const valueOfEmail = { email };
+    console.log(valueOfEmail);
 
     let totalPages = 0;
     let listOfUser = [];
 
-    listOfUser = await User.find({ ...filterValue, isDelete });
+    if (valueOfEmail) {
+      listOfUser = await User.find({
+        email: { $regex: `/${valueOfEmail}/` },
+        isDelete,
+      });
+    } else if (valueOfName) {
+      listOfUser = await User.find({
+        name: { $regex: `/${valueOfName}/` },
+        isDelete,
+      });
+    } else {
+      listOfUser = await User.find({ isDelete });
+    }
 
     if (listOfUser.length === 0) {
       throw createError(httpStatus.NOT_FOUND, 'User not found!');

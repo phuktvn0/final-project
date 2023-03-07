@@ -7,6 +7,7 @@ interface dataPost {
   url: Array<string>;
   price: number;
   idUser: ObjectId;
+  isDelete: boolean;
 }
 
 //Create schema
@@ -18,6 +19,7 @@ const postSchema = new Schema<dataPost>(
     url: { type: [String], required: true },
     price: { type: Number, required: true },
     idUser: { type: mongoose.Types.ObjectId, ref: 'User' },
+    isDelete: { type: Boolean },
   },
   {
     timestamps: true,
