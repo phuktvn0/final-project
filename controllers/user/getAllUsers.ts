@@ -13,8 +13,8 @@ export default async function getAllUsers(
     if (user.isAdmin === false) {
       throw createError(httpStatus.BAD_REQUEST, 'You do not have access!');
     }
-    const users = await User.find({});
-    res.json(users);
+    const users = await User.find({}).sort({ _id: -1 });
+    res.json({ users });
   } catch (err) {
     next(err);
   }
