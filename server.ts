@@ -1,7 +1,6 @@
 // Importing module
 import express from 'express';
 import userRouter from './routers/user.api';
-import postRouter from './routers/post.api';
 
 import cors from 'cors';
 import createError from 'http-errors';
@@ -9,6 +8,8 @@ import httpStatus from 'http-status';
 
 import mongoose from 'mongoose';
 import { connect, disconnect } from './helper';
+import orderRouter from './routers/order.api';
+import productRouter from './routers/product.api';
 
 const app: express.Application = express();
 const PORT: Number = 8000;
@@ -28,8 +29,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // router
-app.use('/user', userRouter);
-app.use('/post', postRouter);
+app.use('/api/products', productRouter);
+app.use('/api/users', userRouter);
+app.use('/api/orders', orderRouter);
+app.get('/api/config/paypal', (req, res) => {
+  res.send(process.env.PAYPAL_CLIENT_ID);
+});
 
 //customize express error handling middleware
 app.use(

@@ -2,43 +2,52 @@ import express from 'express';
 import User from '../../models/User';
 import createError from 'http-errors';
 import httpStatus from 'http-status';
-import { createUserBodySchema } from './user.validators';
+import {
+  createUserBodySchema,
+  loginUserBodySchema,
+  userIdParamSchema,
+} from './user.validators';
+import generateToken from '../../helper';
 
 export default async function updateUserById(
-  req: express.Request & { idUser: string },
+  req: express.Request & { user: any },
   res: express.Response,
   next: express.NextFunction,
 ) {
   try {
-    const { _id } = req.params;
-    const { idUser } = req;
-
-    if (_id !== idUser) {
-      throw createError(httpStatus.BAD_REQUEST, 'You do not have access!');
-    }
-
-    const { error, value } = createUserBodySchema.validate(req.body, {
+    const { error, value } = loginUserBodySchema.validate(req.body, {
       abortEarly: false,
     });
     if (error) {
       throw createError(httpStatus.BAD_REQUEST, error.message);
     }
+    const { _id } = req.params;
+    const { email, password, name } = value;
 
-    const findUser = await User.findById(_id);
-    if (!findUser || findUser.isDelete === true) {
-      throw createError(httpStatus.NOT_FOUND, 'User not exists!');
+    const user = await User.findById(_id);
+
+    if (!user) {
+      throw createError(httpStatus.NOT_FOUND, 'User not found!');
     }
 
-    const updated = await User.findByIdAndUpdate(_id, value, {
-      new: true,
-    });
-    const responseData = {
-      data: {
-        message: 'Update User Successfully!',
-        user: updated,
-      },
-    };
-    res.status(200).send(responseData);
+    if (user) {
+      user.name = name || user.name;
+      user.email = email || user.email;
+      if (password) {
+        user.password = password;
+      }
+      const updatedUser = await user.save();
+      res.json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        isAdmin: updatedUser.isAdmin,
+        token: generateToken(updatedUser._id),
+      });
+    } else {
+      res.status(404);
+      throw new Error('User not found');
+    }
   } catch (err) {
     next(err);
   }

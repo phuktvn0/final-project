@@ -2,11 +2,12 @@ import express from 'express';
 import createError from 'http-errors';
 import httpStatus from 'http-status';
 import jwt from 'jsonwebtoken';
+import User from '../models/User';
 
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'phu';
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'phuktvn';
 
-export async function loginRequired(
-  req: express.Request & { idUser: string },
+export async function protect(
+  req: express.Request & { user },
   res: express.Response,
   next: express.NextFunction,
 ) {
@@ -16,7 +17,7 @@ export async function loginRequired(
       throw createError(httpStatus[401], 'Login Required!');
     }
     const token = tokenString.replace('Bearer ', '');
-    jwt.verify(token, JWT_SECRET_KEY, (err, payload) => {
+    jwt.verify(token, JWT_SECRET_KEY, async (err, payload) => {
       if (err) {
         if (err.name === 'TokenExpiredError') {
           throw createError(httpStatus[401], 'Token Expired!');
@@ -24,10 +25,22 @@ export async function loginRequired(
           throw createError(httpStatus[401], 'Token Invalid!');
         }
       }
-      req.idUser = (payload as jwt.JwtPayload)._id;
+      const user = await User.findById((payload as jwt.JwtPayload).id);
+      req.user = user;
+      next();
     });
-    next();
   } catch (error) {
     next(error);
   }
+}
+
+export async function admin(
+  req: express.Request & { user: any },
+  res: express.Response,
+  next: express.NextFunction,
+) {
+  if (!req.user || !req.user.isAdmin) {
+    return res.status(401).json({ message: 'Not authorized as an Admin' });
+  }
+  next();
 }

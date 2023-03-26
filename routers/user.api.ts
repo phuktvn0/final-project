@@ -2,25 +2,22 @@ import express from 'express';
 import {
   createUser,
   loginUser,
-  searchUser,
-  getMe,
+  getUsers,
   updateUser,
-  deleteUser,
+  getAllUsers,
 } from '../controllers/user/index';
-import { loginRequired } from '../middlewares/authentication';
+import { protect } from '../middlewares/authentication';
 
 const userRouter: express.Router = express.Router();
+
+userRouter.get('/', protect as any, getAllUsers as any);
+
+userRouter.get('/profile', protect as any, getUsers as any);
 
 userRouter.post('/', createUser);
 
 userRouter.post('/login', loginUser);
 
-userRouter.get('/', searchUser);
-
-userRouter.get('/:id', loginRequired as any, getMe as any); //fix
-
-userRouter.put('/:id', loginRequired as any, updateUser as any);
-
-userRouter.delete('/:id', loginRequired as any, deleteUser as any);
+userRouter.put('/:id', protect as any, updateUser as any);
 
 export default userRouter;

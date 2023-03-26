@@ -3,7 +3,7 @@ import User from '../../models/User';
 import createError from 'http-errors';
 import httpStatus from 'http-status';
 import { createUserBodySchema } from './user.validators';
-import { getCurrentDate } from '../../helper';
+import generateToken, { getCurrentDate } from '../../helper';
 import bcrypt from 'bcrypt';
 
 export default async function createUser(
@@ -19,29 +19,33 @@ export default async function createUser(
       throw createError(httpStatus.BAD_REQUEST, error.message);
     }
 
-    const email = value.email;
+    const { email, password } = value;
     const findUser = await User.findOne({ email });
     if (findUser) {
-      throw createError(httpStatus.BAD_REQUEST, 'User exists!');
+      throw createError(httpStatus.BAD_REQUEST, 'User already exists!');
     }
 
-    const password = value.password;
     const salt = await bcrypt.genSalt(10);
     value.password = await bcrypt.hash(password, salt);
 
-    const created = await User.create({
+    const user = await User.create({
       ...value,
       createdAt: getCurrentDate(),
       updatedAt: getCurrentDate(),
     });
 
-    const responseData = {
-      data: {
-        message: 'Create User Successfully!',
-        user: created,
-      },
-    };
-    res.status(200).send(responseData);
+    if (user) {
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(400);
+      throw new Error('Invalid User Data');
+    }
   } catch (err) {
     next(err);
   }

@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
@@ -35,3 +36,13 @@ export const disconnect = async () => {
 export function getCurrentDate() {
   return new Date();
 }
+
+const secretkey = process.env.JWT_SECRET_KEY || 'phuktvn';
+
+const generateToken = (id) => {
+  return jwt.sign({ id }, secretkey, {
+    expiresIn: '30d',
+  });
+};
+
+export default generateToken;

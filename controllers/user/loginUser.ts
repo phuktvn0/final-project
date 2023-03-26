@@ -4,7 +4,7 @@ import createError from 'http-errors';
 import httpStatus from 'http-status';
 import { loginUserBodySchema } from './user.validators';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import generateToken from '../../helper';
 
 export default async function loginUser(
   req: express.Request,
@@ -18,32 +18,25 @@ export default async function loginUser(
     if (error) {
       throw createError(httpStatus.BAD_REQUEST, error.message);
     }
-    let { email, password, isDelete } = value;
+    let { email, password } = value;
 
-    const user = await User.findOne({ email, isDelete });
+    const user = await User.findOne({ email });
     if (!user) {
       throw createError(httpStatus.NOT_FOUND, 'User not exists!');
     }
-    // console.log(user);
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       throw createError(httpStatus[400], 'wrong password!');
     }
 
-    const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'phu';
-    const accessToken = await jwt.sign({ _id: user._id }, JWT_SECRET_KEY, {
-      expiresIn: '1d',
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
     });
-
-    const responseData = {
-      data: {
-        message: 'Login Successfully!',
-        user: user,
-        accessToken: accessToken,
-      },
-    };
-    res.status(200).send(responseData);
   } catch (err) {
     // console.log(err);
     next(err);
