@@ -14,7 +14,7 @@ export default async function getAllUsers(
       throw createError(httpStatus.BAD_REQUEST, 'You do not have access!');
     }
     const users = await User.find({});
-    res.json(users);
+    res.json({ users });
   } catch (err) {
     next(err);
   }
