@@ -19,8 +19,8 @@ orderRouter.get('/:id', getOneOrder as any);
 
 orderRouter.post('/', protect as any, createOrder as any);
 
-orderRouter.put('/:id/pay', protect as any, putPayOrder as any);
+orderRouter.put('/pay/:id', protect as any, putPayOrder as any);
 
-orderRouter.put('/:id/delivered', protect as any, putDeliveredOrder as any);
+orderRouter.put('/delivered/:id', protect as any, putDeliveredOrder as any);
 
 export default orderRouter;
