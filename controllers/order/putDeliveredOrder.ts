@@ -17,8 +17,8 @@ export default async function putDeliveredOrder(
       throw createError(httpStatus.BAD_REQUEST, error.message);
     }
 
-    const { _id } = value;
-    const order = await Order.findById(_id);
+    const { id } = value;
+    const order = await Order.findById(id);
     if (order) {
       order.isDelivered = true;
       order.deliveredAt = new Date();

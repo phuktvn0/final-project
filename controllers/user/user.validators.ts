@@ -19,7 +19,7 @@ export const createUserBodySchema = Joi.object({
 });
 
 export const userIdParamSchema = Joi.object({
-  _id: Joi.string().hex().length(24),
+  id: Joi.string().hex().length(24),
 });
 
 export const updateUserBodySchema = Joi.object({

@@ -16,8 +16,8 @@ export default async function putPayOrder(
     if (error) {
       throw createError(httpStatus.BAD_REQUEST, error.message);
     }
-    const { _id } = value;
-    const order = await Order.findById(_id);
+    const { id } = value;
+    const order = await Order.findById(id);
 
     if (order) {
       order.isPaid = true;

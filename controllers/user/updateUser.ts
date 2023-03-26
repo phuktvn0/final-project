@@ -21,10 +21,10 @@ export default async function updateUserById(
     if (error) {
       throw createError(httpStatus.BAD_REQUEST, error.message);
     }
-    const { _id } = req.params;
+    const { id } = req.params;
     const { email, password, name } = value;
 
-    const user = await User.findById(_id);
+    const user = await User.findById(id);
 
     if (!user) {
       throw createError(httpStatus.NOT_FOUND, 'User not found!');
