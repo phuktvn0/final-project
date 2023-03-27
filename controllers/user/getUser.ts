@@ -11,15 +11,15 @@ export default async function getUsers(
   next: express.NextFunction,
 ) {
   try {
-    const { error, value } = userIdParamSchema.validate(req.user, {
+    const { error, value } = userIdParamSchema.validate(req.params, {
       abortEarly: false,
     });
     if (error) {
       throw createError(httpStatus.BAD_REQUEST, error.message);
     }
+    const { id } = value;
 
-    const { _id } = value;
-    const user = await User.findById(_id);
+    const user = await User.findById(id);
 
     if (user) {
       res.json({
