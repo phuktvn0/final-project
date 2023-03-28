@@ -23,5 +23,6 @@ export const userIdParamSchema = Joi.object({
 });
 
 export const updateUserBodySchema = Joi.object({
+  oldPassword: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
   password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
 });

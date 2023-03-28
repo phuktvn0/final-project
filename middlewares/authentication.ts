@@ -26,6 +26,7 @@ export async function protect(
         }
       }
       const user = await User.findById((payload as jwt.JwtPayload).id);
+      
       req.user = user;
       next();
     });

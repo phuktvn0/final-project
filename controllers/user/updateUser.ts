@@ -19,12 +19,17 @@ export default async function updateUserById(
       throw createError(httpStatus.BAD_REQUEST, error.message);
     }
     const { id } = req.params;
-    const { password } = value;
+    const { oldPassword, password } = value;
 
-    const user = await User.findById(id);
+    const user: any = await User.findById(id);
 
     if (!user) {
       throw createError(httpStatus.NOT_FOUND, 'User not found!');
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      throw createError(httpStatus[400], 'wrong password!');
     }
 
     const salt = await bcrypt.genSalt(10);
