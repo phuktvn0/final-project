@@ -7,7 +7,8 @@ export default async function getOrder(
   next: express.NextFunction,
 ) {
   try {
-    const order = await Order.find().populate('user', 'name email');
+    const id = req.user._id;
+    const order = await Order.find({ user: id });
 
     if (order) {
       res.json(order);
