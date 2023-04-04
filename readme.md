@@ -1,22 +1,22 @@
 ## User stories
 
 - Người dùng bình thường:
-  tạo tài khoản
-  đăng nhập
-  xem thông tin cá nhân
-  đổi mật khẩu
-  xem các sản phẩm đang bán
-  thêm đồ vào giỏ hàng
-  đặt hàng
-  xem trạng thái đơn hàng
+  tạo tài khoản,
+  đăng nhập,
+  xem thông tin cá nhân,
+  đổi mật khẩu,
+  xem các sản phẩm đang bán,
+  thêm đồ vào giỏ hàng,
+  đặt hàng,
+  xem trạng thái đơn hàng,
 
 - Admin:
-  xem tất cả đơn hàng
-  cật nhật trạng thái đơn hàng ( thanh toán, giao hàng)
-  thêm sản phẩm
-  xóa sản phẩm
-  sửa sản phẩm
-  xem toàn bộ danh sách người dùng
+  xem tất cả đơn hàng,
+  cật nhật trạng thái đơn hàng ( thanh toán, giao hàng),
+  thêm sản phẩm,
+  xóa sản phẩm,
+  sửa sản phẩm,
+  xem toàn bộ danh sách người dùng,
 
 ## Product API /api/products
 
